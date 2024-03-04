@@ -1,0 +1,41 @@
+<div>
+  <h2>Project: {{id}}</h2>
+  <div id="table_project"></div>
+  <div style="height: 20px"></div>
+  <div id="information_pane">
+    <div class="tab_buttons_line">
+      <button id="project_dataset_tab_button" class="project_tab_button tab_button tab_active project_dataset_table_tab_button">Dataset</button>
+      <script>
+          $('#project_dataset_tab_button').click( 
+              function() {
+                  jpost.changeTabPanel('project_dataset', 'project');
+              }
+          );
+      </script>
+      <button class="fill_blank"></button>
+      <div style="clear: both;"></div>
+    </div>
+    <div id="project_dataset_tab_pane" class="tab_pane project_tab_pane">
+      <form id="dataset_form" onsubmit="return false;">
+        <div id="project_dataset" class="information_table"></div>
+      </form>
+    </div>
+    <script>
+        var id = '{{id}}';
+        var stanzas = [
+            {
+                name: 'table_project',
+                id: 'table_project',
+                width: 900,
+                height: 750,
+                data: function() {
+                    return {project: id};
+                }
+            }
+        ];
+        jpost.loadStanzas(stanzas);
+        jpost.createProjectDatasetTable('project_dataset', id);
+      </script>
+    </div>
+  </div>
+</div>

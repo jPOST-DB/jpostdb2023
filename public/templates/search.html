@@ -1,0 +1,118 @@
+<div>
+  <div>
+    {{include("filter.html")}}
+  </div>
+  <div class="information_pane">
+    <div class="tab_buttons_line">
+      <button id="global_project_tab_button" class="global_tab_button tab_button tab_active project_table_tab_button">Project</button>
+      <button id="global_dataset_tab_button" class="global_tab_button tab_button dataset_table_tab_button">Dataset</button>
+      <button id="global_protein_tab_button" class="global_tab_button tab_button protein_table_tab_button">Protein</button>
+      <button class="fill_blank"></button>
+      <div style="clear: both;"></div>      
+      <script>
+        $('#global_project_tab_button').click( 
+            function() {
+                jpost.changeTabPanel('global_project', 'global');
+            }
+        );
+        $('#global_dataset_tab_button').click( 
+            function() {
+                jpost.changeTabPanel('global_dataset', 'global');
+            }
+        );
+        $('#global_protein_tab_button').click( 
+            function() {
+                jpost.changeTabPanel('global_protein', 'global');
+            }
+        );
+      </script>
+    </div>
+    <div id="global_project_tab_pane" class="tab_pane global_tab_pane">
+      <div>
+        <input id="global_project_text" type="text" style="width: 300px" placeholder="Keyword" />
+      </div>
+      <div id="projects" class="information_table"></div>
+    </div>
+    <script>
+      jpost.createGlobalProjectTable('projects');
+    </script>
+    <div id="global_dataset_tab_pane" class="tab_pane global_tab_pane" style="display: none;">
+      <div>
+        <input id="global_dataset_text" type="text" style="width: 300px" placeholder="Keyword" />
+      </div>
+      <div id="datasets" class="information_table"></div>
+    </div>    
+    <script>
+      jpost.createGlobalDatasetTable('datasets');
+    </script>
+    <div id="global_protein_tab_pane" class="tab_pane global_tab_pane" style="display: none;">
+      <div>
+        <input id="global_protein_text" type="text" style="width: 300px" placeholder="Keyword" />
+      </div>      
+      <div id="proteins" class="information_table"></div>
+    </div>
+    <script>
+      jpost.createGlobalProteinTable('proteins');
+    </script>
+    <div>
+      <button id="new_slice_button">New Slice...</button>
+    </div>
+    <script>
+      var project_keyword_id = -1;
+      var dataset_keyword_id = -1;
+      var protein_keyword_id = -1;
+
+      $('#new_slice_button').click(
+          function() {
+              jpost.openTab('slice');
+              jpost.openNewSliceDialogWithParameters();
+          }
+      );
+      $('#global_project_text').keyup(
+          function() {
+              if(project_keyword_id >= 0) {
+                  clearInterval(project_keyword_id);
+              }
+              project_keyword_id = setInterval(
+                  function() {
+                      jpost.updateGlobalTables(false);
+                      clearInterval(project_keyword_id);
+                      project_keyword_id = -1;
+                  },
+                  500
+              );
+          }
+      );      
+      $('#global_dataset_text').keyup(
+          function() {
+              if(dataset_keyword_id >= 0) {
+                  clearInterval(dataset_keyword_id);
+              }
+              dataset_keyword_id = setInterval(
+                  function() {
+                      jpost.updateGlobalTables(false);
+                      clearInterval(dataset_keyword_id);
+                      dataset_keyword_id = -1;
+                  },
+                  500
+              );
+          }
+      );
+      $('#global_protein_text').keyup(
+          function() {
+              if(protein_keyword_id >= 0) {
+                  clearInterval(protein_keyword_id);
+              }
+              protein_keyword_id = setInterval(
+                  function() {
+                      jpost.updateGlobalTables(false);
+                      clearInterval(protein_keyword_id);
+                      protein_keyword_id = -1;
+                  },
+                  500
+              );
+          }
+      );
+    </script>
+  </div>
+</div>
