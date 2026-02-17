@@ -1,10 +1,10 @@
 <?php
     class Config {
         /** default stanza service */
-        public static $DEFAULT_STANZA_SERVICE = 'https://db-dev.jpostdb.org/ts' ;
+        public static $DEFAULT_STANZA_SERVICE = 'https://tools.jpostdb.org/ts' ;
         /** default sparql endpoint */
-        public static $DEFAULT_END_POINT = 'https://db-dev.jpostdb.org/proxy/sparql';
+        public static $DEFAULT_END_POINT = 'https://tools.jpostdb.org/proxy/sparql';
         /** SPARQList URL */
-        public static $SPARQLIST_URL = 'https://db-dev.jpostdb.org/rest/api/';
+        public static $SPARQLIST_URL = 'https://tools.jpostdb.org/rest/api/';
     }
 ?>

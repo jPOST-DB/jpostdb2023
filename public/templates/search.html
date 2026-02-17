@@ -4,8 +4,8 @@
   </div>
   <div class="information_pane">
     <div class="tab_buttons_line">
-      <button id="global_project_tab_button" class="global_tab_button tab_button tab_active project_table_tab_button">Project</button>
-      <button id="global_dataset_tab_button" class="global_tab_button tab_button dataset_table_tab_button">Dataset</button>
+      <button id="global_project_tab_button" class="global_tab_button tab_button project_table_tab_button">Project</button>
+      <button id="global_dataset_tab_button" class="global_tab_button tab_button tab_active dataset_table_tab_button">Dataset</button>
       <button id="global_protein_tab_button" class="global_tab_button tab_button protein_table_tab_button">Protein</button>
       <button class="fill_blank"></button>
       <div style="clear: both;"></div>      
@@ -27,7 +27,7 @@
         );
       </script>
     </div>
-    <div id="global_project_tab_pane" class="tab_pane global_tab_pane">
+    <div id="global_project_tab_pane" class="tab_pane global_tab_pane" style="display: none;">
       <div>
         <input id="global_project_text" type="text" style="width: 300px" placeholder="Keyword" />
       </div>
@@ -36,7 +36,7 @@
     <script>
       jpost.createGlobalProjectTable('projects');
     </script>
-    <div id="global_dataset_tab_pane" class="tab_pane global_tab_pane" style="display: none;">
+    <div id="global_dataset_tab_pane" class="tab_pane global_tab_pane">
       <div>
         <input id="global_dataset_text" type="text" style="width: 300px" placeholder="Keyword" />
       </div>

@@ -83,6 +83,10 @@
             $url = Config::$SPARQLIST_URL . $api;
             $parameters = array('line_count' => 1);
             self::setTarget($parameters);
+            $project = self::getParameter('id');
+            if ($project !== 'nothing') {
+                $parameters['project'] = $project;
+            }
             $datasets = null;
             if(array_key_exists('datasets', $parameters)) {
                 $datasets = $parameters['datasets'];
@@ -97,14 +101,20 @@
             self::setFilterParameters($parameters);
             $parameters['line_count'] = 1;
             $count = 0;
-            if($datasets !== 'nothing') {        
+            if($datasets !== 'nothing' || $project !== 'nothing') {
+                if ($project !== 'nothing') {
+                    $parameters['project'] = $project;
+                }  
                 $data = SparqlTool::postSparqList($url, $parameters);
                 $count = intval($data[0]['line_count']);
             }
             $data = array();
-            if($datasets !== 'nothing') {
+            if($datasets !== 'nothing' || $project !== 'nothing') {
                 unset( $parameters['line_count']);
                 self::setPageParameters($parameters);
+                if ($project !== 'nothing') {
+                    $parameters['project'] = $project;
+                }
                 $data = SparqlTool::postSparqList($url, $parameters);
             }
             $result = array(

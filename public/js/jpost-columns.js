@@ -38,7 +38,7 @@ jpost.globalDatasetColumns = [
             var tag = '<a href="' + url + '" target="_blank">' + dataset.dataset_id + '</a>';
             return tag;
         },
-        width: 350
+        width: 250
     },
     {
         title: 'Project ID',
@@ -48,7 +48,7 @@ jpost.globalDatasetColumns = [
             var tag = '<a href="' + url + '" target="_blank">' + dataset.project_id + '</a>';
             return tag;
         },
-        width: 350
+        width: 250
     },
     {
         title: 'Species',
@@ -58,13 +58,13 @@ jpost.globalDatasetColumns = [
     {
         title: '#proteins',
         field: 'protein_count',
-        width: 200,
+        width: 150,
         align: 'right'
     },
     {
         title: '#spectra',
         field: 'spectrum_count',
-        width: 200,
+        width: 150,
         align: 'right'
     }
 ];
@@ -253,18 +253,14 @@ jpost.projectDatasetColumns = [
     },
     {
         title: '#spectra',
-        field: 'spactrum_count',
+        field: 'spectrum_count',
         width: 120,
         align: 'right'
     },
     {
         title: '#raw files',
-        field: 'raw_file_name',
+        field: 'rawdata_count',
         width: 120,
-        format: function(dataset) {
-            files = dataset['raw_file_name'].split(',');
-            return '' + files.length;
-        },
         align: 'right'
     },
     {

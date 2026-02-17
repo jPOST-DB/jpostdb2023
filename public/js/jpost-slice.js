@@ -203,6 +203,8 @@ jpost.addSliceContens = function( slice ) {
     $( '#' + mainId ).append( '<div id="' + id + '_chromosome"></div>' );
     $( '#' + mainId ).append( '<h3>Protein Existence</h3>' );
     $( '#' + mainId ).append( '<div id="' + id + '_protein"></div>' );
+    $( '#' + mainId ).append( '<h3>Gene Ontology</h3>' );
+    $( '#' + mainId ).append( '<div id="' + id + '_go_count"></div>' ); 
     $( '#' + mainId ).append( '<h3>Pathway Mapping</h3>' );
     $( '#' + mainId ).append( '<div id="' + id + '_kegg"></div>' );
     //jpost.loadSliceStanzas( slice );
@@ -252,21 +254,30 @@ jpost.loadSliceStanzas = function( slice ) {
             name: 'table_slice',
             id: id + '_table_slice',
             data: function() {
-                return { dataset: datasets }
+                return { 
+                    dataset: datasets,
+                    "slice_stanza": 1
+                }
             }
         },
         {
             name: 'chromosome_histogram',
             id: id + '_chromosome',
             data: function() {
-                return { dataset: datasets }
+                return {
+                    dataset: datasets,
+                    "slice_stanza": 1
+                }
             }
         },
         {
             name: 'protein_evidence',
             id: id + '_protein',
             data:  function() {
-                return { dataset: datasets }
+                return { 
+                    dataset: datasets,
+                    "slice_stanza": 1
+                }
             }
         },
 	{
@@ -283,11 +294,14 @@ jpost.loadSliceStanzas = function( slice ) {
             name: 'kegg_mapping_form',
             id: id + '_kegg',
             data:  function() {
-                return { dataset: datasets }
+                return {
+                    dataset: datasets,
+                    "slice_stanza": 1
+                }
             }
         }
     ];
-    jpost.loadStanzas( stanzas );
+    jpost.loadStanzas(stanzas);
 }
 
 // select slice
@@ -788,7 +802,7 @@ jpost.createSliceProteinTable = function( slice ) {
     table.createTable(
         id,
         {
-            url: 'protein_table.php',
+            url: 'slice_protein_table.php',
             columns: jpost.sliceProteinColumns,
             parameters: function() {
                 return { datasets: slice.datasets };
@@ -815,7 +829,7 @@ jpost.createSlicePeptideTable = function( slice ) {
             },
             countClass: 'peptide_tab_button',
             countUpdate: function( count ) {
-                return 'Peptide (' + count + ')';
+                return 'Peptide-protein relation (' + count + ')';
             }
         }
     );

@@ -586,7 +586,7 @@ jpost.createDatasetPeptideTable = function(id, dataset) {
             },
             countClass: 'peptide_table_tab_button',
             countUpdate: function(count) {
-                return 'Peptide (' + count + ')';
+                return 'Peptide-protein relation (' + count + ')';
             }
         },
         true

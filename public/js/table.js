@@ -85,6 +85,7 @@ table.setHeader = function( name, tableId, columns ) {
     );
 
     $( '#' + tableId ).css( 'width', totalWidth );
+    $( '#' + tableId ).css( 'min-width', '100%' );
 }
 
 // add column
@@ -478,7 +479,7 @@ table.download = function( name ) {
     if( data === null ) {
         data = {};
     }
-    data.limit = 25;
+    data.limit = 10000;
     table.getSortParameters( name, data );
     
     var count = data.limit;
