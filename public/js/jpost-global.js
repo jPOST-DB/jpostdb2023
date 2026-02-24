@@ -46,25 +46,22 @@ jpost.addForm = function(num, count) {
     jpost.addFormText(id);
     jpost.addFormDeleteButton(id);
     jpost.addFilterChart(id);
-    jpost.updateFilterForm(id);
+    jpost.updateFilterForm(id, true); // addForm の場合は table, chart の update はしない
     if(jpost.getNextFormType() === null) {
         $('#form_add_button').prop('disabled', true);
     }
 
     if(num != undefined && num > 0){
-	    if(count == undefined) {
+        if(count == undefined) {
             count = 0;  
         }
-	    let id = setInterval(
-            function(){
-	            let shadowRoot = document.getElementsByTagName("togostanza-stat_pie_chart")[count].shadowRoot;
-	            if(shadowRoot && shadowRoot.childNodes[0] && shadowRoot.childNodes[0].getElementsByTagName("div")[0]){
-		            clearInterval(id);
-    		        jpost.addForm(num - 1, count + 1);
-	            }
-	        },
-            100
-        );
+        let id = setInterval(function(){
+            let shadowRoot = document.getElementsByTagName("togostanza-stat_pie_chart")[count].shadowRoot;
+            if(shadowRoot && shadowRoot.childNodes[0] && shadowRoot.childNodes[0].getElementsByTagName("div")[0]){
+                clearInterval(id);
+                jpost.addForm(num - 1, count + 1);
+	    }
+	}, 100);
     }
 }
 
@@ -203,7 +200,7 @@ jpost.deleteForm = function(id) {
 }
 
 // update filter form
-jpost.updateFilterForm = function( id ) {
+jpost.updateFilterForm = function( id, suppressUpdate ) {
     $('#form_selection' + id + '_value').css('display', 'none');
 
     var item = $('#form_selection' + id).val();
@@ -241,9 +238,11 @@ jpost.updateFilterForm = function( id ) {
     var type = jpost.getPieChartTypeName(item);
     jpost.filterChartIds[stanzaId] = type;
     jpost.updateFilterSelections();
-    if(table.tables && table.tables['projects'] && table.tables['datasets'] && table.tables['proteins']) {
-        jpost.updateGlobalTables();
-    } 
+    if (!suppressUpdate) {
+        if (table.tables && table.tables['projects'] && table.tables['datasets'] && table.tables['proteins']) {
+            jpost.updateGlobalTables();
+        }
+    }
 }
 
 // update filter selections
@@ -469,34 +468,58 @@ jpost.updateGlobalTables = function(updateStanza = true) {
     }
 }
 
-// update pie charts
+// update pie chart 差分確認してから再描画s
+jpost._pieChartAttrCache = {}; // 属性キャッシュ
 jpost.updatePieCharts = function() {
     var parameters = {};
-    jpost.setStanzaParameters( parameters );
-     let updatePieChartStanzaParams = function(id){   
-     var type = jpost.filterChartIds[ id ];
+    jpost.setStanzaParameters(parameters);
+
+    let applyIfChanged = function($el, key, nextValue, cache) {
+        // nextValue: string or null（nullならremove）
+        let prev = cache[key];
+
+        // 同じなら何もしない
+        if (prev === nextValue) return;
+
+        if (nextValue === null) {
+            // 既に無いなら何もしない
+            if ($el.attr(key) !== undefined) $el.removeAttr(key);
+            delete cache[key];
+        } else {
+            $el.attr(key, nextValue);
+            cache[key] = nextValue;
+        }
+    };
+
+    let updatePieChartStanzaParams = function(id) {
+        var type = jpost.filterChartIds[id];
         var innerId = id + '_inner';
-        jpost.filters.forEach(
-            function( filter ) {
-                [filter.name, filter.name + '_s'].forEach( 
-                    function( item ) {
-                        if( item in parameters) {
-                            $('#' + innerId).attr(item, parameters[item]);    
-                        }
-                        else {
-                            $('#' + innerId).removeAttr(item);
-                        }
-                    }
-                );
-            }
-        );
-        $('#' + innerId).attr('type', type);
-     };
-     for(id in jpost.filterChartIds) {
+        var $inner = $('#' + innerId);
+
+        // innerがまだ無い/未描画ならスキップ（タイミング問題の保険）
+        if ($inner.length === 0) return;
+
+        // stanzaごとのキャッシュ
+        if (!jpost._pieChartAttrCache[id]) jpost._pieChartAttrCache[id] = {};
+        let cache = jpost._pieChartAttrCache[id];
+
+        // filterごとに [name, name_s] を更新（差分のみ）
+        jpost.filters.forEach(function(filter) {
+            [filter.name, filter.name + '_s'].forEach(function(item) {
+                let nextValue = (item in parameters) ? parameters[item] : null;
+                applyIfChanged($inner, item, nextValue, cache);
+            });
+        });
+
+        // typeも差分更新
+        applyIfChanged($inner, 'type', type, cache);
+    };
+
+    for (id in jpost.filterChartIds) {
         let num = id.match(/(\d+)/)[1];
-        setTimeout( updatePieChartStanzaParams, num * 500, id);
-     }
-}
+        setTimeout(updatePieChartStanzaParams, num * 200, id);
+    }
+};
 
 jpost.setPieChartFilter = function() {
     var filter = jpost.getFilterParameters();
