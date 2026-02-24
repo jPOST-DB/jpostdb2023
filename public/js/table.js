@@ -213,7 +213,7 @@ table.setTableData = function( name, response ) {
     table.setPageButtons( name, response );   
     table.setTableDataList( name, response );
     table.setEtc( name, response );    
-    table.setTableCell( name, response );
+//    table.setTableCell( name, response );
 }
 
 // set page selection
