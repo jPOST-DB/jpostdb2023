@@ -61,7 +61,7 @@ jpost.addForm = function(num, count) {
                 clearInterval(id);
                 jpost.addForm(num - 1, count + 1);
 	    }
-	}, 100);
+	}, 300);
     }
 }
 
@@ -517,7 +517,7 @@ jpost.updatePieCharts = function() {
 
     for (id in jpost.filterChartIds) {
         let num = id.match(/(\d+)/)[1];
-        setTimeout(updatePieChartStanzaParams, num * 200, id);
+        setTimeout(updatePieChartStanzaParams, num * 300, id);
     }
 };
 
