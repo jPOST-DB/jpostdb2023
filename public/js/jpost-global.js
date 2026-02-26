@@ -14,6 +14,9 @@ jpost.filterChartIds = {};
 // global tables
 jpost.globalTables = [];
 
+// pie chart attribute cache
+jpost._pieChartAttrCache = {};
+
 // prepare filter
 jpost.prepareFilter = function() {
     $('#filter_title_button').click(jpost.toggleFilterForm);
@@ -103,6 +106,8 @@ jpost.addFilterChart = function( id ) {
             + clazz + '"></div>';
     $( '#filter_chart' ).append( tag );
     jpost.loadPieChart( stanzaId, type, id );
+    if (!jpost._pieChartAttrCache[stanzaId]) jpost._pieChartAttrCache[stanzaId] = {};
+    jpost._pieChartAttrCache[stanzaId].type = type;
 }
 
 // set stanza parameters 
@@ -469,7 +474,6 @@ jpost.updateGlobalTables = function(updateStanza = true) {
 }
 
 // update pie chart 差分確認してから再描画s
-jpost._pieChartAttrCache = {}; // 属性キャッシュ
 jpost.updatePieCharts = function() {
     var parameters = {};
     jpost.setStanzaParameters(parameters);
@@ -517,7 +521,7 @@ jpost.updatePieCharts = function() {
 
     for (id in jpost.filterChartIds) {
         let num = id.match(/(\d+)/)[1];
-        setTimeout(updatePieChartStanzaParams, num * 300, id);
+	setTimeout(updatePieChartStanzaParams, num * 300, id);
     }
 };
 
