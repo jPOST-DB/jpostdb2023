@@ -94,7 +94,7 @@
                   }
               }
           ];
-          jpost.loadStanzas( stanzas );
+          setTimeout( jpost.loadStanzas( stanzas ), 100);
           jpost.createDatasetProteinTable( 'dataset_proteins', id );
           jpost.createDatasetPeptideTable( 'dataset_peptides', id );
       </script>

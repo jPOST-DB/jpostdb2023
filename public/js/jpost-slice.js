@@ -125,7 +125,7 @@ jpost.updateTabs = function() {
             tab = tab + 'href="javascript:jpost.selectSlice( ' + slice.id + '  )"><div>' + slice.name
                 + '</div><div><input id="slice_checkbox' + slice.id + '" type="checkbox" class="slice_tab_check" name="slices[]" value="' + slice.id + '" /></div></a>';
             $( '#slice_tab_field' ).append( tab );
-            jpost.addSliceContens( slice );
+	    jpost.addSliceContens( slice );
             $( '.slices' ).append( '<option value="' + slice.id + '">' + slice.name + '</option>' );
             $( '#slice_checkbox' + slice.id ).change( jpost.onCheckSlice )
             if( checkedSliceIds.indexOf( slice.id ) >= 0 ) {
@@ -208,7 +208,7 @@ jpost.addSliceContens = function( slice ) {
     $( '#' + mainId ).append( '<h3>Pathway Mapping</h3>' );
     $( '#' + mainId ).append( '<div id="' + id + '_kegg"></div>' );
     //jpost.loadSliceStanzas( slice );
-    setTimeout(jpost.loadSliceStanzas, slice.id * 100, slice );
+    setTimeout(jpost.loadSliceStanzas, (slice.id + 2) * 100, slice );
 
     $( '#' + mainId ).append( '<div id="' + id + '_tab_buttons" class="tab_buttons_line"></div>' );
     tag = '<button id="' + id + '_dataset_tab_button" class="' + id + '_tab_button tab_button tab_active dataset_tab_button">Dataset</button>';
