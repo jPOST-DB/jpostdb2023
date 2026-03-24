@@ -30,7 +30,6 @@ jpost.loadStanzas = function(stanzas) {
                 tag = tag + ' ' + key + '="' + value + '"';
             }
             tag = tag + '></' + tagName + '>';
-            console.log( tag );
             $( '#' + stanza.id ).html( tag );
         }
     );
