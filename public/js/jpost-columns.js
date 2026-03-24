@@ -113,9 +113,9 @@ jpost.globalPeptideColumns = [
         format: function (peptide) {
             var id = peptide.peptide_id;
             var url = 'peptide.php?id=' + id;
-            if( jpost.slice !== null ) {
-                url = url + '&slice=' + jpost.slice.name;
-            }
+	    //if( jpost.slice !== null ) {
+            //    url = url + '&slice=' + jpost.slice.name;
+            //}
             var tag = '<a href="' + url + '" target="_blank">' + id + '</a>';
             return tag;
         },
