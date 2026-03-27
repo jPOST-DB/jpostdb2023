@@ -25,22 +25,21 @@
     </header>
     <article class="main">
       <div class="component main">
-        <div style="width: 1278px; margin: auto; padding: 15px; background: #e6e6e6; font-size: 16px; font-weight: 700; color: #da5019; text-align: center;">
-	  <p>
-		jPOSTdb will be unavailable during the time shown below due to a scheduled system maintenance.<br>
-		We thank you for your understanding and cooperation in this matter.
-	  </p>
-	  <p>
-		Date and Time: Thursday, March 12, 17:00 – Sunday, March 15, 22:00 (UTC+9)
-	  </p>
+        <div
+          id="downtimeMessage"
+          style="
+            display: none;
+	    margin: 30px 180px 30px 180px;
+            padding: 15px;
+            background: #e6e6e6;
+            font-size: 16px;
+            font-weight: 700;
+            color: #da5019;
+            text-align: center;
+          "
+        >
         </div>
-
-<!--       <div style="width: 1278px; margin: auto; padding: 15px; background: #e6e6e6; font-size: 16px; font-weight: 700; color: #da5019; text-align: center;">
-          <p>
-           We are currently experiencing network issues and are working to resolve them. Thank you for your patience. (Sep 4)
-          </p>
-        </div>
--->
+	
         <div id="search_panel" class="main_tab_field">
             <p style="font-size:16px;width:800px;"><span style="font-size:20px;font-weight:bold;">jPOSTdb</span> (Japan ProteOme STandard DataBase) is a database containing re-analysis results with unified criteria for proteome data from <a href="https://repository.jpostdb.org" style="font-weight:bold;">jPOSTrepo</a>. It provides viewers showing the frequency of detected post-translational modifications, the co-occurrence of phosphorylation sites on a peptide and peptide sharing among proteoforms.</p>
             <div id="main_search_panel">
@@ -61,7 +60,95 @@
       </div>
     </article>
     <script>
-        jpost.openTab('search');
+jpost.openTab('search');
+
+// for downtime message
+const generateDatetimeString = (datetime, timezone) => {
+  const date = new Date(datetime);
+  const opt = (options) =>
+    new Intl.DateTimeFormat('en-US', { ...options, timeZone: timezone }).format(date);
+
+  const weekday = opt({ weekday: 'long' });
+  const month   = opt({ month: 'long' });
+  const day     = opt({ day: 'numeric' });
+  const time    = opt({ hour: '2-digit', minute: '2-digit', hour12: false });
+
+  return `${weekday}, ${month} ${day}, ${time}`;
+};
+
+const generateTimezoneString = (datetime, timezone) => {
+  const date = new Date(datetime);
+  const tzName = new Intl.DateTimeFormat('en-US', {
+    timeZone: timezone,
+    timeZoneName: 'shortOffset',
+  })
+    .formatToParts(date)
+    .find(part => part.type === 'timeZoneName')
+    .value;
+  return tzName.replace('GMT', 'UTC');
+};
+
+const calcDistance = (now, start, end) => {
+  if (now < start) {
+    return start.getTime() - now.getTime();
+  } else if (end < now) {
+    return Number.POSITIVE_INFINITY;
+  }
+  return 0;
+};
+
+// ----- public functions -----
+
+const getEvents = async () => {
+  const res = await fetch('https://calendar.jpostdb.org');
+  const events = await res.json();
+  return events;
+};
+
+const findUpcomingDowntime = (events, system) => {
+  const now = new Date();
+  return events
+    .filter(event => event.category === 'downtime' && event.systemList.includes(system))
+    .filter(event => calcDistance(now, new Date(event.start.dateTime), new Date(event.end.dateTime)) < Number.POSITIVE_INFINITY)
+    .reduce((acc, evt) => {
+      if (!(evt.start.dateTime && evt.end.dateTime)) {
+        return acc;
+      } else if (!(acc && acc.start.dateTime && acc.end.dateTime)) {
+        return evt;
+      }
+      const evtDist = calcDistance(now, new Date(evt.start.dateTime), new Date(evt.end.dateTime));
+      const accDist = calcDistance(now, new Date(acc.start.dateTime), new Date(acc.end.dateTime));
+      return evtDist < accDist ? evt : acc;
+    }, undefined);
+};
+
+const generateMessage = (event) => {
+  if (event) {
+    const title = event.title ?? 'a scheduled system maintenance';
+    const startDatetime = generateDatetimeString(event.start.dateTime, event.start.timeZone);
+    const endDatetime = generateDatetimeString(event.end.dateTime, event.end.timeZone);
+    const timezone = generateTimezoneString(event.end.dateTime, event.endTimeZone);
+    return `
+      <p>
+        jPOSTdb will be unavailable during the time shown below due to ${title}.
+        <br />
+        We thank you for your understanding and cooperation in this matter.
+      </p>
+      <p>
+        Date and Time: ${startDatetime} – ${endDatetime} (${timezone})
+      </p>
+    `;
+  }
+  return null;
+};
+
+window.addEventListener('load', async () => {
+  const container = document.getElementById('downtimeMessage');
+  const events = await getEvents();
+  const upcomingDowntime = findUpcomingDowntime(events, 'db')
+  container.innerHTML = generateMessage(upcomingDowntime);
+  if (container.innerHTML) container.style.display = "block";
+});
     </script>
     {{include("footer.html")}}
     {{include("dialogs.html")}}
